@@ -62,15 +62,20 @@ void fooFree(Foo* obj) {
 
 int main() {
     int res;
-    unsigned int i;
+    unsigned int i = 0, count = 0;
     pthread_t a_t, b_t, c_t;
     void *res_t;
     Foo *f;
-    int input[] = {3, 2, 1};
+    int input[] = {3, 2, 1, 
+	           1, 2, 3,
+		   1, 3, 2,
+		   2, 1, 3,
+		   2, 3, 1, 
+		   3, 1, 2};
 
     f = fooCreate();
-    for (i = 0; i < 3; i++) {
-	printf("switch case %d\n", input[i]);
+    for (; i < sizeof(input) / sizeof(input[0]); i++) {
+	//printf("switch case %d\n", input[i]);
         switch (input[i]) {
 	    case 1:
 		res = pthread_create(&a_t, NULL, first, NULL);
@@ -94,21 +99,28 @@ int main() {
 	        }
 		break;
 	}
-    }
-    res = pthread_join(a_t, NULL);
-    if (res != 0) {
-        perror("Thread join failed");
-        exit(EXIT_FAILURE);
-    }
-    res = pthread_join(b_t, NULL);
-    if (res != 0) {
-        perror("Thread join failed");
-        exit(EXIT_FAILURE);
-    }
-    res = pthread_join(c_t, NULL);
-    if (res != 0) {
-        perror("Thread join failed");
-        exit(EXIT_FAILURE);
+
+	/* Join threads after a trio of each are created */
+	if (count == 2) {
+		res = pthread_join(a_t, NULL);
+		if (res != 0) {
+		    perror("Thread join failed");
+		    exit(EXIT_FAILURE);
+		}
+		res = pthread_join(b_t, NULL);
+		if (res != 0) {
+		    perror("Thread join failed");
+		    exit(EXIT_FAILURE);
+		}
+		res = pthread_join(c_t, NULL);
+		if (res != 0) {
+		    perror("Thread join failed");
+		    exit(EXIT_FAILURE);
+		}
+		count = 0;
+	} else {
+		count++;
+	}
     }
     printf("\n");
     fooFree(f);
