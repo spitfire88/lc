@@ -1,0 +1,12 @@
+[
+    {
+        "key": "ctrl+alt+e", // Replace with your preferred shortcut
+        "command": "workbench.extensions.action.disableExtension",
+        "args": "GitHub.copilot"
+    },
+    {
+        "key": "ctrl+alt+shift+e", // Replace with your preferred shortcut
+        "command": "workbench.extensions.action.enableExtension",
+        "args": "GitHub.copilot"
+    }
+]
