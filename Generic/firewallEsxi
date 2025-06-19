@@ -1,0 +1,2 @@
+esxcli network firewall ruleset set -r sshClient -e 1
+

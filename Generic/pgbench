@@ -1,0 +1,36 @@
+https://www.cloudbees.com/blog/tuning-postgresql-with-pgbench
+
+Vmware config:
+
+It might be easier to install and run pgbench on your existing VM. See the following directions. Let me know if this works for you. Otherwise I'll get the box upload location from Marko/Alex.
+To install pgbench & PostgreSQL: (Ubuntu example)
+apt install postgresql postgresql-contrib
+Tuning PostgreSQL configuration file: (attached .conf file is tuned for 16GB memory & SSD drive)
+Replace postgresql.conf file in /etc/postgresql/16/main with the attached file (need to run as postgres): 
+sudo -i -u postgres
+cp postgresql.conf /etc/postgresql/16/main/postgresql.conf
+# run as root, restart PostgreSQL. (or just reboot the VM)
+systemctl restart postgresql
+Create & initialize pgbench DBs with scale 100 & 500:
+sudo -i -u postgres
+createdb s100   # Create the database (if it doesn't exist)
+pgbench -i -s 100 s100   # Initialize the database with scale 100
+createdb s500
+pgbench -i -s 500 s500
+
+Warm up the DB's after initialization (run for ~120 sec. for each DB):  (-c #_of_clients -j #_of_jobs_or_threads)
+pgbench -c 16 -j 16 -T 120 s100
+pgbench -c 16 -j 16 -T 120 s500
+Do real test runs: (3 different tests on s100 DB for 120 sec. each, and 1 test on s500 DB for 600 sec.)
+(run as root)
+sudo -u postgres pgbench -c 16 -j 8 -T 120 s100 | tee c16_j8_T120.log
+sudo -u postgres pgbench -c 16 -j 16 -T 120 s100 | tee c16_j16_T120.log
+sudo -u postgres pgbench -c 32 -j 16 -T 120 s100 | tee c32_j16_T120.log
+sudo -u postgres pgbench -c 16 -j 16 -T 600 s500 | tee c16_j16_5T600.log
+Find average latency & tps in the output: 
+	latency average = 1.295 ms
+		tps = 6175.392370 (without initial connection time)
+		Tips: to reduce run-to-run variations, pin the vcpus, and/or average over 3 runs.
+		To make sure the tests (DBs) start from the same state for TDX & baseline, use Non-Persistent Mode disk, or clone from the same VM.
+		Let me know if you have any questions.
+

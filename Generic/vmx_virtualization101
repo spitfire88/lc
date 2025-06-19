@@ -1,0 +1,22 @@
+	1. VMX ON (you are virtualzing the CPU) 
+		1. VMX root mode 
+			1. Manages virtualization stuffs
+			2. VMM/monitor – KVM, runs in ring 0, vmcore/monitor/vmm 
+				1. Page table #1a, #1b, #1c, … per VM for VM a, b, c
+			3. User space: QEMU??? – Runs in ring 3, vmcore/monitor/ulm
+		2. VMX non-root mode 
+			1. VM OS, TD VM
+		3. Transitions 
+			1. Non-Root -> root 
+				1. Vmexit events, tdvmcal, vmcall, etc
+			2. Root -> non-root 
+				1. Vmenter, tdh.vp.enter
+	2. VMX OFF (like bare metal) 
+		1. HostOS Kernel/user space, VMKernel 
+			1. Page table #2, IDT/GDT
+		2. QEMU???
+
+
+
+Programming the EPT
+	EPT Violation

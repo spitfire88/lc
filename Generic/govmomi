@@ -1,0 +1,31 @@
+export GOVC_INSECURE=true
+export GOVC_DATASTORE=datastore1 
+export GOVC_NETWORK="VM Network"
+export GOVC_URL="https://root@10.219.191.231/sdk"
+export GOVC_PASSWORD=sunfire@123
+export PATH=$PATH:/home/salvares/govmomi/dist/govc_linux_amd64_v1
+
+[CENTOS]
+govc vm.register "[datastore1] centos/centos.vmx"
+govc vm.info centos 
+govc vm.power -on centos
+govc datastore.tail -n 1000 "[datastore1] centos/vmware.log" | tee /tmp/vmware.log
+
+[performance]
+govc datacenter.info
+govc vm.register "[datastore1] salvares/performanceVM/linux/timothym-tdx-linux.vmx"
+govc vm.info performance
+govc vm.power -on performance
+
+[debugTDVM]
+govc datastore.ls salvares/debugTDVM/linux
+govc vm.register "[datastore1] salvares/debugTDVM/linux/td-guest-ubuntu-22.04.vmx"
+govc ls vm
+
+[vcenter]
+GOVC_URL=https://root@10.223.246.163/sdk GOVC_USERNAME=administrator@vsphere.local GOVC_PASSWORD=Intel@123 govc ls
+
+[iommu]
+GOVC_URL=https://root@10.45.134.164/sdk govc vm.register "[datastore2] tdvm/tdvm.vmx"
+GOVC_URL=https://root@10.45.134.164/sdk govc vm.change -vm td-ubuntu -iommu-enabled=False
+GOVC_URL=https://root@10.45.134.164/sdk govc vm.power -on td-ubuntu

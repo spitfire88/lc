@@ -1,0 +1,18 @@
+vmkfstools -X 75G -d eagerzerothick ubuntu.vmdk
+
+Boot into the system
+
+Sudo fdisk /dev/sda
+w
+
+Sudo growpart /dev/sda 1
+
+Sudo resize2fs /dev/sda1
+
+Df -h
+
+
+Create new partition /dev/sdb:
+https://kb.worldstream.com/mounting-a-disk-in-linux/
+
+

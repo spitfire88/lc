@@ -1,0 +1,11 @@
+Change GRUB_TIMEOUT to -1 in /etc/default/grub.d/* 
+Change /boot/efi/EFI/ubuntu/grub.cfg, timeout=-1 before reboot
+
+Install kernel package and then do:
+sudo grub-editenv /boot/efi/EFI/ubuntu/grubenv create; sudo grub-mkconfig -o /boot/efi/EFI/ubuntu/grub.cfg; sudo sed -i 's/set timeout=0/set timeout=-1/' /boot/efi/EFI/ubuntu/grub.cfg
+
+set timeout in grub.cfg:
+sed -i 's/set timeout=0/set timeout=-1/' /boot/efi/EFI/ubuntu/grub.cfg
+
+Apt remove -y grub-pc-bin, grub-pc
+

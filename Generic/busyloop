@@ -1,0 +1,15 @@
+#if 1
+   {
+      volatile uint32 flag = 0;
+      while (!flag) {
+         asm volatile("pause");
+         asm volatile("nop");
+         asm volatile("nop");
+         asm volatile("nop");
+         asm volatile("nop");
+         asm volatile("nop");
+         asm volatile("nop");
+      }
+   }
+#endif
+

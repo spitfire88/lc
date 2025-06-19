@@ -1,0 +1,10 @@
+Current Version:
+[   15.400651] virt/tdx: TDX module: attributes 0x0, vendor_id 0x8086, major_version 1, minor_version 5, build_date 20231008, build_num 595
+
+https://cc-enabling.trustedservices.intel.com/intel-tdx-enabling-guide/04/hardware_setup/
+	
+	getsec approach
+	https://wiki.ith.intel.com/display/tdxval/TDX+Module+building+and+loading#TDXModulebuildingandloading-ConditionalLoading
+
+	getsec94.0.efi -a SEAMLDR_1.5.05_SEAMLDR.bin
+	PSeamldrLauncher.0.8.efi -seamlib TDX_1.5.05_TDX.so -sigs TDX_1.5.05_TDX.so.sigstruct -scenario boot

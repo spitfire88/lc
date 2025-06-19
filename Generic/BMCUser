@@ -1,0 +1,12 @@
+root/0penBmc1
+
+ipmitool user set name 2 debuguser
+ipmitool user set password 2 0penBmc1
+ipmitool channel setaccess 1 2 ipmi=on privilege=4
+ipmitool user enable 2
+ipmitool channel setaccess 3 2 ipmi=on privilege=4
+/usr/bin/enable-ssh.sh
+
+
+Serial logs from BMC
+ssh root@<BMC-IP> -p 2200

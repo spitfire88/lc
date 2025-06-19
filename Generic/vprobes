@@ -1,0 +1,10 @@
+https://github.com/vmware-archive/vprobe-toolkit
+
+/etc/vmware/config
+Add vprobe.allow = TRUE
+
+Add vprobe.enable = TRUE to vmx file
+
+vprobe ../vprobe/tdxExit.emt -m testvm1.vmx
+
+vprobe ../vprobe/tdx_notifyvcpuid.emt -m TDVM.vmx --experimental

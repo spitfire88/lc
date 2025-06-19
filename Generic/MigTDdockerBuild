@@ -1,0 +1,24 @@
+1. Edit container/Dockerfile
+diff --git a/container/Dockerfile b/container/Dockerfile
+index 13a0f1a..bc6e068 100644
+--- a/container/Dockerfile
++++ b/container/Dockerfile
+@@ -13,6 +13,7 @@ RUN apt-get update && \
+     clang llvm nasm \
+     ocaml ocamlbuild wget pkg-config libtool autoconf autotools-dev automake \
+     screen expect \
++       vim libc6-dev-i386 \ 
+     # cleanup
+     && apt-get clean && rm -rf /var/lib/apt/lists/*
+2. sudo -E ./sh_script/docker.sh -f container
+3. check for missing header
+ls /usr/include/x86_64-linux-gnu/bits/libc-header-start.h
+4. cd MigTD/
+5. Edit deps/td-shim/library/ring/Cargo.toml 
+[dependencies]
++ getrandom = { version = "0.2.10", features = ["rdrand"] }
+...
+6. ./sh_script/preparation.sh
+7. rustup target add x86_64-unknown-none
+cargo image --no-default-features --features=vmcall-vsock
+cargo image --log-level trace --no-default-features --features=vmcall-raw,test_disable_ra_and_accept_all,vmcall-interrupt 2>&1 | tee ../buildlog

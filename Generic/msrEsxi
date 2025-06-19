@@ -1,0 +1,2 @@
+vsish -e cat /hardware/msr/pcpu/0/addr/0x503
+0x2

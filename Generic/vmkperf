@@ -1,0 +1,3 @@
+vmkperf poll fixed_unhalted_core_cycles -i 1 -n 100 | awk '{print $1}'
+
+esxtop -a (press p)

@@ -1,0 +1,3 @@
+Enable SSH Client in Networking -> Firewal rules
+
+esxcli network firewall ruleset set -r sshClient -e 1  

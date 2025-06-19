@@ -1,0 +1,2 @@
+dpkg -S /bin/ls
+dpkg -S /usr/include/*.h

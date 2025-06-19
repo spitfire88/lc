@@ -1,0 +1,4 @@
+1. KVM events
+	grep "" /sys/kernel/debug/tracing/events/kvm/kvm_msr/*
+2. perf record -e 'kvm:*' -a sleep 5
+3. perf script | grep -o "kvm:kvm_[^ ]*" | sort | uniq -c

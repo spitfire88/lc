@@ -1,0 +1,16 @@
+Here’s the CPU cycle savings I measured on one particular workload.
+So it does help more than 2-3%, almost close to 10% reduction for some.
+https://bugzilla-vcf.lvn.broadcom.net/show_bug.cgi?id=3420135#c37
+Bigger IO sizes are more throttled by disk throughput, and so the CPUs
+have less to do -> any reduction in work per request will help.
+Just in case you can’t access the PR, here’s the table. The number is cpu cycles (one of the
+cpu cycle counters), the last column is the immediate-resume-hint TDX Module run.
++----------------------+---------+--------------+----------------+
+| | noTDX | TDX | TDX w/imm |
++----------------------+---------+--------------+----------------+
+| 4k randread dpth32 | 64417 | 75413 / 17% | 73162 / 13.6% |
++----------------------+---------+--------------+----------------+
+| 64k randread dpth32 | 173455 | 284623 / 64% | 272667 / 57.2% |
++----------------------+---------+--------------+----------------+
+| 256k randread dpth32 | 425436 | 754528 / 77% | 704122 / 65.5% |
++----------------------+---------+--------------+————————+

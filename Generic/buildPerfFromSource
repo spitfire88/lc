@@ -1,0 +1,6 @@
+sudo apt install pkg-config dwarves libdw-dev systemtap-sdt-dev libunwind-dev libperl-dev clang libslang2-dev python-dev-is-python3 libnuma-dev libbabeltrace-ctf-dev libcapstone-dev libtraceevent-dev libpfm4 flex
+
+cd tools/perf
+make
+make install
+sudo cp perf /usr/bin/

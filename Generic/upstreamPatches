@@ -1,0 +1,21 @@
+# download and apply
+b4 am -o- 20240424231407.14098-1-alexey.makhalov@broadcom.com | git am
+
+# download a particular version of the patch
+ b4 am -v9 -o- 20240424231407.14098-1-alexey.makhalov@broadcom.com | git am
+
+
+# send-email
+sudo apt install git-email
+
+# for multiple patchsets
+git format-patch --subject-prefix="linux-tdx-guest] [PATCH" -2
+
+UPSTREAM SEND-EMAIL
+git send-email --smtp-debug --smtp-server smtp.intel.com --to=bhelgaas@google.com --to=linux-pci@vger.kernel.org --to=linux-kernel@vger.kernel.org --cc=mika.westerberg@linux.intel.com 0001-PCI-thunderbolt-Add-quirk-to-handle-incorrect-Suppor.patch
+
+git send-email --smtp-debug --smtp-server smtp.intel.com --to "Kuo-Lang Tseng <kuo-lang.tseng@intel.com>" --to "Tim Merrifield <timothym@vmware.com>" --to "Alex James <jamesal@vmware.com>" --cc "Alexey Panfilov <alexey.a.panfilov@intel.com>" -cc "Kishore K Bodke <kishore.k.bodke@intel.com>" 0001-Access-videoram-as-decrypted-memory.patch
+
+UPSTREAM with cover letter
+git format-patch --cover-letter --subject-prefix="linux-tdx-guest][PATCH" -2
+

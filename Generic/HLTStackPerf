@@ -1,0 +1,7 @@
+[root@emr-bkc ~]# cat /sys/devices/system/cpu/cpuidle/current_driver
+None
+
+Verify using perf
+sudo perf record -a -g -- sleep 1
+sudo perf report -i perf.data --no-children
+Expand (e) on the tdx_halt path to verify what idle path was chosen

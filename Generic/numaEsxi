@@ -1,0 +1,2 @@
+sched-stats -t numa-clients
+
