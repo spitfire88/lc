@@ -1,0 +1,201 @@
+Delivered-To: tim.merrifield@broadcom.com
+Received: by 2002:a05:6a10:a0c9:b0:52e:966f:82da with SMTP id j9csp163155pxa;
+        Tue, 9 Jan 2024 00:41:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHIkrlzwkJt8YRcNPG/mRwePbsU/Oyrg23O5I8zP06cNVfm4EkR8QBPxvUmBxnH2nPzv5Ug
+X-Received: by 2002:a05:620a:9:b0:783:3135:6afa with SMTP id j9-20020a05620a000900b0078331356afamr86953qki.44.1704789683641;
+        Tue, 09 Jan 2024 00:41:23 -0800 (PST)
+ARC-Seal: i=2; a=rsa-sha256; t=1704789683; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=Quo7l58BILhFFY9yjIG0R2K5tf53LBJMpC7cXu+Cp/VQWLwPJfHDSg3Uv3zMh9Ubc1
+         EG9yISZvD1zCWFnU0EXv3gVApzLaHKAPnLjgZpqyw6Wa0LhAhv9x+6uWxIgz54KSajOx
+         MHisyf+GfDsOD68QjIN5OE26tzU9LELV6lAbLnBb0Y4/0pgGCQtw0fVOWOKans+v9+uI
+         3V9KdiX7zFOfDappFi2w1POt6hDSbrB4EY7WaSInYc5rJ1TprmOQw+EA6HF9rAe+tKsx
+         QrbN4lbjmVj1jJte7Edbz4CX+kSxZ+HPJabpNWmXJCRz/K3NYJQrHjSm3TfdWVOTR99G
+         FlGg==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=allow-external:externalbanner:content-transfer-encoding
+         :mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:dkim-signature:resent-from:dkim-signature;
+        bh=X8/C+cZAZlDGQnbyhqyYcqig/5vzt/WyH0xZX56gmkE=;
+        fh=6RQVJhUadVlbCYQO8WbwFdcKs3+SddxIKFPo/gACb1Y=;
+        b=LFgUne5+RsfHjopf7Iz+tDCGkMAwH0I1k3SK++BvmAB2Ixtz6nqrsRwif/ylNRxzuQ
+         SDmrCqXh57ZkahK9P3/WpEIgAU4sBgJ2WYu5jfgr6TDYy3DvRhK9mS7uam21cZCpE5Xm
+         x2gZl+/jl/u2uB+A+a70+liI6W6h38EF4f5UYRPzKkWzwjbZ/d3liSRTymbu5EMcNvyx
+         hgYtLf/BB5z1Pbktv5GNJdOrUIsnCqB7DqoIsSUK0pEYGnn278eZpbuQUxBgozEYlQN2
+         CXqNF6e/+uG2e8ThITVqB5/blPW2S03FIikuaQUOMvkybbXT1NovBQ10gvDXjD1kGOr3
+         8A3A==
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=pass header.i=@onevmw.onmicrosoft.com header.s=selector2-onevmw-onmicrosoft-com header.b=bHKyupPX;
+       dkim=pass header.i=@broadcom.com header.s=google header.b=F31BFnkF;
+       arc=pass (i=1 spf=pass spfdomain=broadcom.com dkim=pass dkdomain=broadcom.com dmarc=pass fromdomain=broadcom.com);
+       spf=fail (google.com: domain of timothym+srs=0cwzx=it=broadcom.com=alexey.makhalov@vmware.com does not designate 2603:10b6:5:120::42 as permitted sender) smtp.mailfrom="timothym+SRS=0CWZx=IT=broadcom.com=alexey.makhalov@vmware.com"
+Return-Path: <timothym+SRS=0CWZx=IT=broadcom.com=alexey.makhalov@vmware.com>
+Received: from BL0PR02CU006.outbound.protection.outlook.com (mail-eastusazlp17010002.outbound.protection.outlook.com. [40.93.11.2])
+        by mx.google.com with ESMTPS id z21-20020a05620a08d500b0078319edcf7bsi1475029qkz.399.2024.01.09.00.41.23
+        for <tim.merrifield@broadcom.com>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Jan 2024 00:41:23 -0800 (PST)
+Received-SPF: fail (google.com: domain of timothym+srs=0cwzx=it=broadcom.com=alexey.makhalov@vmware.com does not designate 2603:10b6:5:120::42 as permitted sender) client-ip=2603:10b6:5:120::42;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@onevmw.onmicrosoft.com header.s=selector2-onevmw-onmicrosoft-com header.b=bHKyupPX;
+       dkim=pass header.i=@broadcom.com header.s=google header.b=F31BFnkF;
+       arc=pass (i=1 spf=pass spfdomain=broadcom.com dkim=pass dkdomain=broadcom.com dmarc=pass fromdomain=broadcom.com);
+       spf=fail (google.com: domain of timothym+srs=0cwzx=it=broadcom.com=alexey.makhalov@vmware.com does not designate 2603:10b6:5:120::42 as permitted sender) smtp.mailfrom="timothym+SRS=0CWZx=IT=broadcom.com=alexey.makhalov@vmware.com"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MpFMjRhkda6WaMP8vKTpzA5Qe1JJHQZ8OksqvibqZw4DI5dHq1uP6M93gBgv9LLksU9bbJS2WZnLPV9j6x+jDhE/x6CdoEpaRRLB92mTboIzrDEyGrKw1qL+gX1acGtlttrHxmJ1BjwJv0VCxWNHQNZ9R55sb1IbbWgmVc1zv7uSeUYcnU2f+iL1S23Zxr5qExJcljh1tZ+XWKXMZQQqhx16buaIf9XBaEbu8POAsQ/gU0W0oHyWeUG4EnTzyRa7MEDzpuNOh89A1/3AcBeZ8plQyHBnlppC6HYNLUuZ9rXj5b1QTPSfCrPD801aIEV9etDIEdVkgm2rdNlTaZSJ7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X8/C+cZAZlDGQnbyhqyYcqig/5vzt/WyH0xZX56gmkE=;
+ b=m9my/QZseBkWTXINjrJobbwxI82W/0i+6U7D0ccjcWKEJ/imTl5A2/fe8GfbbcWj3liVwVAdRr+VxYTk+1GMhFgxgcQgVSvchwZ0zVFlgVLj5NJ0UQup3lT96Ute5invVqw2vwOclzcR33VBmY74lhhQQDOFb7bUACM1fX+of4MwrKLyCE4AR/7L7zyvlvOQRgaE8y1I0R748lDOyGE2ctz8L55hSzvNlNNH15GNHn+tMiFUFnOUAuFIWOUVoSdY1KZPyv1E6BV81wbS4kkKm5owHspDu2WRasUac94YsLi1ScwePFLliv8xVtDuZzuZC3M46mY0Qh9+i1gkLC0jLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 209.85.216.45) smtp.rcpttodomain=vmware.com smtp.mailfrom=broadcom.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=broadcom.com; dkim=pass (signature was verified)
+ header.d=broadcom.com; arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=onevmw.onmicrosoft.com; s=selector2-onevmw-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X8/C+cZAZlDGQnbyhqyYcqig/5vzt/WyH0xZX56gmkE=;
+ b=bHKyupPX/JU88uz4CXDHlt3lqwXcfvXcP1QxaKrEmwJElBFRZKWqmKC93EP2wghNMuCqSHNf9WhkRtACAR1orTjBlS3xuK7DAwKMp5OWlSWqjdWCgQINh58wt1EPrHCcxvdNX0e9/W8r7Kfb6mo1iS631IP47dVGINPkSeoIeFM=
+Resent-From: <timothym@vmware.com>
+Received: from DM6PR06CA0029.namprd06.prod.outlook.com (2603:10b6:5:120::42)
+ by SN7PR05MB7552.namprd05.prod.outlook.com (2603:10b6:806:108::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.23; Tue, 9 Jan
+ 2024 08:41:16 +0000
+Received: from DM6NAM04FT026.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:5:120:cafe::f8) by DM6PR06CA0029.outlook.office365.com
+ (2603:10b6:5:120::42) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.21 via Frontend
+ Transport; Tue, 9 Jan 2024 08:41:16 +0000
+Authentication-Results: spf=pass (sender IP is 209.85.216.45)
+ smtp.mailfrom=broadcom.com; dkim=pass (signature was verified)
+ header.d=broadcom.com;dmarc=pass action=none header.from=broadcom.com;
+Received-SPF: Pass (protection.outlook.com: domain of broadcom.com designates
+ 209.85.216.45 as permitted sender) receiver=protection.outlook.com;
+ client-ip=209.85.216.45; helo=mail-pj1-f45.google.com; pr=C
+Received: from mail-pj1-f45.google.com (209.85.216.45) by
+ DM6NAM04FT026.mail.protection.outlook.com (10.13.159.77) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7135.17 via Frontend Transport; Tue, 9 Jan 2024 08:41:16 +0000
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-28d7870574bso1053618a91.3
+        for <timothym@vmware.com>; Tue, 09 Jan 2024 00:41:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1704789676; x=1705394476; darn=vmware.com;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X8/C+cZAZlDGQnbyhqyYcqig/5vzt/WyH0xZX56gmkE=;
+        b=F31BFnkFXcgm+rdRx2OEU3rxw7bp3vB+hEQytJUgQO5uPRpfEmhXQYH2uu3dn8Tm8S
+         2pLfbS4sNxGcbzRm/xnqV1hKyvTq5fZRyB16D1vrhava+1g/NKv8t8w22h3Vrivf/5+l
+         48uNQ9t6x9bsfuDpKvqeJsD8co9zVSDpKX21s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704789676; x=1705394476;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X8/C+cZAZlDGQnbyhqyYcqig/5vzt/WyH0xZX56gmkE=;
+        b=PtcPA3GfgJmo706tEPsYAQZQaTc0TlcX1pAC8+ZgkDNRYOQprKBr/SL5aF69E6XRcD
+         8/HOktHJrDNaMcr/QYoZT28+oSJ+p1mfdl/l7OhcUyh1puJ+JdgcZ6PICD1zGr+Fvpsf
+         DQwXttUnKZ9mwDrm8gL8KAS60mMPfF1iZDCXgdUhnAIF+pD6tD+mK95ghF6k87DcBPVJ
+         blEcYqnqKmEQV5WKzQBas8IvfrcAlhgcOYZGvbXWEA/n7HK9YuFBKdD4pWO2TTPsovJS
+         JdtjTWkEIf/z5YCPINEwArFtWWQGwpMQgQs2o8dR9auHFbwXhMcnlxTXgaHAz+R1irJd
+         2TyA==
+X-Gm-Message-State: AOJu0Yz7blKKIQvYtScJgQLD9QngzyzRiITdjnqhLhxEaVz1317bXGmK
+	xyZ3ZMUKsB+r+oAow+BUMwH0/oX2GGIbzjLVcrRjZad2s00Q5jQGUm/WYZxpR6WFQo5E2xPeciN
+	GHqlpYMN+4g==
+X-Received: by 2002:a17:90a:d50d:b0:28d:1e1b:d73b with SMTP id t13-20020a17090ad50d00b0028d1e1bd73bmr1951835pju.19.1704789675730;
+        Tue, 09 Jan 2024 00:41:15 -0800 (PST)
+Return-Path: alexey.makhalov@broadcom.com
+Received: from amakhalov-build-vm.eng.vmware.com ([128.177.82.146])
+        by smtp.gmail.com with ESMTPSA id sf15-20020a17090b51cf00b0028d435cc2cbsm4772293pjb.15.2024.01.09.00.41.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jan 2024 00:41:15 -0800 (PST)
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+X-Google-Original-From: Alexey Makhalov <amakhalov@vmware.com>
+To: linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	bp@alien8.de,
+	hpa@zytor.com,
+	dave.hansen@linux.intel.com,
+	mingo@redhat.com,
+	tglx@linutronix.de
+Cc: x86@kernel.org,
+	netdev@vger.kernel.org,
+	richardcochran@gmail.com,
+	linux-input@vger.kernel.org,
+	dmitry.torokhov@gmail.com,
+	zackr@vmware.com,
+	linux-graphics-maintainer@vmware.com,
+	pv-drivers@vmware.com,
+	namit@vmware.com,
+	timothym@vmware.com,
+	akaher@vmware.com,
+	jsipek@vmware.com,
+	dri-devel@lists.freedesktop.org,
+	daniel@ffwll.ch,
+	airlied@gmail.com,
+	tzimmermann@suse.de,
+	mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	horms@kernel.org,
+	kirill.shutemov@linux.intel.com
+Subject: [PATCH v6 6/7] x86/vmware: Undefine VMWARE_HYPERCALL
+Date: Tue,  9 Jan 2024 00:40:51 -0800
+Message-Id: <20240109084052.58661-7-amakhalov@vmware.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20240109084052.58661-1-amakhalov@vmware.com>
+References: <20240109084052.58661-1-amakhalov@vmware.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-EOPTenantAttributedMessage: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0:0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM04FT026:EE_|SN7PR05MB7552:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 471dc70d-a8cb-4450-34fd-08dc10eebe87
+X-LD-Processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtFwd
+X-MS-Exchange-AtpMessageProperties: SA
+ExternalBanner: X
+Allow-External: True
+X-MS-Exchange-SenderADCheck: 0
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	hRBHMy2d7aEF+4uvDZY/9o20/byfWMxSBCZTnmP+DeYddEHjfr6HDGx4rWNdSvpoASEZjvQH4vK9FKGF+mNKLr0KfdpKrDJGD9QVY6wT9FqxqQNzcqwjTuKV6hI3jVzPwRfCdNfjili+rlVbBh5xnw4nr1gAjPsChazDsaD78ulPxR9fLhyn1IPqAnOD9jRm2uW361isdlZxM3x095q7z3BAzoisz90yszSsIgi08ABDRL3FS0d3Pi1ww6rqCxALCspVrMDbv1BFqRz0Gt/1o0yElEzbj3uzN5BICOP+7c6gj24DFKwDVy/W2/3rFymMGciJK3lzrXuxi8xOpUI+hyj3UXAZ/mcZQmY2d4DEJVjCZOnpmSNkWcX+HUoiy/0ip+v6SFU7vtYi3J2UHVIqY2/tHX5knCJWt6YWiMP2xUjWye6SazhKBPqHQPyHqH2G1GWvtE8pfXhuavPDDvd5BnxhGmLL3G2wxeKhwzpKGRma1JbX7ZydBIOtcT/jTAuITHSLDH0S9W1gsYi7OeicbCV/yCMNFES2xuOvhLMreiRnkTVskx1J7TWqqOnEvU5rtbm/8ayG0ASHnonJOrn6xtu2mJ2qjGcyHcwR56y2D9CSRIIkVZ44TFa1osnAXdP3BrlmgmO/gI8pU+TIWMq2tYiUgHuEMovBoDq7p+HBlsDvMdk6a4hbStTI7jLSykhW
+X-Forefront-Antispam-Report:
+	CIP:209.85.216.45;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail-pj1-f45.google.com;PTR:mail-pj1-f45.google.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(346002)(376002)(136003)(396003)(61400799012)(451199024)(64100799003)(48200799006)(2906002)(44832011)(4326008)(9686003)(336012)(36756003)(7696005)(498600001)(6666004)(8676002)(4744005)(5660300002)(356005)(7636003)(70586007)(68406010)(1076003)(26005)(956004)(107886003)(86362001)(316002)(7596003);DIR:OUT;SFP:1101;
+X-MS-Exchange-ForwardingLoop:
+	timothym@vmware.com;b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-OriginatorOrg: onevmw.onmicrosoft.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2024 08:41:16.4560
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 471dc70d-a8cb-4450-34fd-08dc10eebe87
+X-MS-Exchange-CrossTenant-Id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM04FT026.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR05MB7552
+
+No more direct use of VMWARE_HYPERCALL macro should be allowed.
+
+Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
+---
+ arch/x86/include/asm/vmware.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
+index 2ac87068184a..84a31f579a30 100644
+--- a/arch/x86/include/asm/vmware.h
++++ b/arch/x86/include/asm/vmware.h
+@@ -273,5 +273,6 @@ unsigned long vmware_hypercall_hb_in(unsigned long cmd, unsigned long in2,
+ }
+ #undef VMW_BP_REG
+ #undef VMW_BP_CONSTRAINT
++#undef VMWARE_HYPERCALL
+ 
+ #endif
+-- 
+2.39.0
+

@@ -1,0 +1,39 @@
+From 45c31f1033de6f06b8b31e95165df358ba85da51 Mon Sep 17 00:00:00 2001
+From: "tim.merrifield" <tim.merrifield@broadcom.com>
+Date: Mon, 26 Feb 2024 23:30:51 +0000
+Subject: add prctl call for coco hypercalls.
+
+---
+ open-vm-tools/lib/vmCheck/vmcheck.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/open-vm-tools/lib/vmCheck/vmcheck.c b/open-vm-tools/lib/vmCheck/vmcheck.c
+index 0e296be5..5753a544 100644
+--- a/open-vm-tools/lib/vmCheck/vmcheck.c
++++ b/open-vm-tools/lib/vmCheck/vmcheck.c
+@@ -25,6 +25,11 @@
+ 
+ #include <stdlib.h>
+ #include <string.h>
++#include <stdio.h>
++#include <unistd.h>
++
++#include <sys/prctl.h>
++#include <sys/syscall.h>
+ 
+ #ifdef WINNT_DDK
+ #   include <ntddk.h>
+@@ -278,6 +283,10 @@ VmCheck_IsVirtualWorld(void)
+    char *hypervisorSig;
+    uint32 i;
+ 
++   if (syscall(SYS_arch_prctl, 0x1030, 1) < 0) {
++      printf("failed.\n");
++   }
++
+    /*
+     * Check for other environments like Xen and VirtualPC only if we haven't
+     * already detected that we are on a VMware hypervisor. See PR 1035346.
+-- 
+2.34.1
+

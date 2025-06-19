@@ -1,0 +1,51 @@
+From bbbc1f843e6a630fa3aa09eba6b0e362cefa66b7 Mon Sep 17 00:00:00 2001
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Date: Tue, 9 Jan 2024 00:40:48 -0800
+Subject: [PATCH 3/9] ptp/vmware: Use VMware hypercall API
+
+Switch from VMWARE_HYPERCALL macro to vmware_hypercall API.
+Eliminate arch specific code. No functional changes intended.
+
+Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
+Reviewed-by: Nadav Amit <namit@vmware.com>
+Reviewed-by: Jeff Sipek <jsipek@vmware.com>
+---
+ drivers/ptp/ptp_vmw.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/ptp/ptp_vmw.c b/drivers/ptp/ptp_vmw.c
+index 279d191d2df9..e5bb521b9b82 100644
+--- a/drivers/ptp/ptp_vmw.c
++++ b/drivers/ptp/ptp_vmw.c
+@@ -14,7 +14,6 @@
+ #include <asm/hypervisor.h>
+ #include <asm/vmware.h>
+ 
+-#define VMWARE_MAGIC 0x564D5868
+ #define VMWARE_CMD_PCLK(nr) ((nr << 16) | 97)
+ #define VMWARE_CMD_PCLK_GETTIME VMWARE_CMD_PCLK(0)
+ 
+@@ -24,17 +23,10 @@ static struct ptp_clock *ptp_vmw_clock;
+ 
+ static int ptp_vmw_pclk_read(u64 *ns)
+ {
+-	u32 ret, nsec_hi, nsec_lo, unused1, unused2, unused3;
+-
+-	asm volatile (VMWARE_HYPERCALL :
+-		"=a"(ret), "=b"(nsec_hi), "=c"(nsec_lo), "=d"(unused1),
+-		"=S"(unused2), "=D"(unused3) :
+-		[port] "i" (VMWARE_HYPERVISOR_PORT),
+-		[mode] "m" (vmware_hypercall_mode),
+-		"a"(VMWARE_MAGIC), "b"(0),
+-		"c"(VMWARE_CMD_PCLK_GETTIME), "d"(0) :
+-		"memory");
++	u32 ret, nsec_hi, nsec_lo;
+ 
++	ret = vmware_hypercall3(VMWARE_CMD_PCLK_GETTIME, 0,
++				&nsec_hi, &nsec_lo);
+ 	if (ret == 0)
+ 		*ns = ((u64)nsec_hi << 32) | nsec_lo;
+ 	return ret;
+-- 
+2.34.1
+

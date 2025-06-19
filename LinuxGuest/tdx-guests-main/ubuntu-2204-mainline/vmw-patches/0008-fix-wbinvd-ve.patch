@@ -1,0 +1,29 @@
+From 4e01a7f98ad7861d7733e8420e381a343726c3f6 Mon Sep 17 00:00:00 2001
+From: "tim.merrifield" <tim.merrifield@broadcom.com>
+Date: Thu, 22 Feb 2024 23:40:02 +0000
+Subject: fix wbinvd ve.
+
+---
+ arch/x86/include/asm/agp.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/agp.h b/arch/x86/include/asm/agp.h
+index c8c111d8fbd7..ed0fc7a947bd 100644
+--- a/arch/x86/include/asm/agp.h
++++ b/arch/x86/include/asm/agp.h
+@@ -21,6 +21,11 @@
+  * need to be called for each cacheline of the whole page so it may
+  * not be worth it. Would need a page for it.
+  */
+-#define flush_agp_cache() wbinvd()
++
++#define flush_agp_cache()					\
++do {								\
++	if (!cpu_feature_enabled(X86_FEATURE_TDX_GUEST))   	\
++		wbinvd();					\
++} while (0)
+ 
+ #endif /* _ASM_X86_AGP_H */
+-- 
+2.34.1
+

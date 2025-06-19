@@ -1,0 +1,5 @@
+/bin/sh: 1: cannot create include/config/.tmp_kernel.release: Permission denied
+  UPD     include/config/kernel.release
+mv: cannot stat 'include/config/.tmp_kernel.release': No such file or directory
+make[1]: *** [/home/salvares/tim/tdx-guests-main/ubuntu-2204-mainline/linux/Makefile:1176: include/config/kernel.release] Error 1
+make: *** [Makefile:240: __sub-make] Error 2

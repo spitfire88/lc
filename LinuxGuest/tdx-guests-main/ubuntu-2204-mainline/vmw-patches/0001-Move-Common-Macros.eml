@@ -1,0 +1,376 @@
+Delivered-To: tim.merrifield@broadcom.com
+Received: by 2002:a05:6a10:a0c9:b0:52e:966f:82da with SMTP id j9csp163082pxa;
+        Tue, 9 Jan 2024 00:41:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFk1cKOir0hSNdN8o/+QvPFXZwW/HyPBffOWuw1KtuoW6qXCrCeiBl7rxfIx1zQPPwpCLdP
+X-Received: by 2002:a9d:7692:0:b0:6d9:e320:2316 with SMTP id j18-20020a9d7692000000b006d9e3202316mr3675243otl.0.1704789671866;
+        Tue, 09 Jan 2024 00:41:11 -0800 (PST)
+ARC-Seal: i=2; a=rsa-sha256; t=1704789671; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=Cn05ytRDU8cEfiQGRThT4m5frZCtHS9A92+3X8C++UBYqbqr7Ukd9a/Cjidae2n6Iy
+         +X12eCmrdVAVYr69CexP2tptDU55Pe67/rvIiivS3x/fZZVyBP3olPCO8xTwnZ69b/Ad
+         2K8ZNKA2LTj0/kHdBEGe7JammgtZBlHvsGDF6ipNoE/8ZYaK5ygAq/2+s11IOMGXGpqa
+         DfklgaA4T1HAsRw+K7+q+Qv4VEQ6gSx39e54BWOqKlrDygSxeTTRswhieAXTM2VBpj5M
+         cPlum8a/72dMTEzqCZOii+wxBDPEER1NfC79lNP9wxy9HSt7VDS4O7vygraztGrV5oMT
+         0Psg==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=allow-external:externalbanner:content-transfer-encoding
+         :mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:dkim-signature:resent-from:dkim-signature;
+        bh=yGIzhL7QiBJFkwlC84l4JtgAxPW7nCL9ZrpZ+JYeVUM=;
+        fh=6RQVJhUadVlbCYQO8WbwFdcKs3+SddxIKFPo/gACb1Y=;
+        b=phSezcye6MXWgN5h3GKGfOqu6rp+WJBsOUwLlVijlOV85p7lQzNtSXuqGTgEkKJZ85
+         evDcNbU+Dor3noF68rIQHjYvzLMDgH6IokFWt0vJFm6YSHjf8Z1tKGqJ2o4REHHCbWWL
+         9VwUZPrah9gXgHXFW1Zh8ONRYl0TJEQddOEjZXXh0akLUUMCBdPIj95g2hlFT3+Gjo4x
+         eJwzJg/QnrMtKG8GiWg8DPt6MqAA6qpBlKW5SOD/5/fWvtDyZa4Hzx3nj6bbttPhj8BK
+         Z5Aok/U0EczUqMh5AdK/60o5fg6C88+WVjL9jPj2nu8hgigAT7KGkJK/QWw5grnXtwXC
+         X6lA==
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=pass header.i=@onevmw.onmicrosoft.com header.s=selector2-onevmw-onmicrosoft-com header.b="pTjN3F/4";
+       dkim=pass header.i=@broadcom.com header.s=google header.b=U2h0MemE;
+       arc=pass (i=1 dkim=pass dkdomain=broadcom.com dmarc=pass fromdomain=broadcom.com);
+       spf=fail (google.com: domain of timothym+srs=0cwzx=it=broadcom.com=alexey.makhalov@vmware.com does not designate 2603:10b6:408:10c::26 as permitted sender) smtp.mailfrom="timothym+SRS=0CWZx=IT=broadcom.com=alexey.makhalov@vmware.com"
+Return-Path: <timothym+SRS=0CWZx=IT=broadcom.com=alexey.makhalov@vmware.com>
+Received: from CY4PR02CU007.outbound.protection.outlook.com (mail-westcentralusazlp17011016.outbound.protection.outlook.com. [40.93.6.16])
+        by mx.google.com with ESMTPS id b16-20020a637150000000b005cd881447basi1124843pgn.652.2024.01.09.00.41.11
+        for <tim.merrifield@broadcom.com>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Jan 2024 00:41:11 -0800 (PST)
+Received-SPF: fail (google.com: domain of timothym+srs=0cwzx=it=broadcom.com=alexey.makhalov@vmware.com does not designate 2603:10b6:408:10c::26 as permitted sender) client-ip=2603:10b6:408:10c::26;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@onevmw.onmicrosoft.com header.s=selector2-onevmw-onmicrosoft-com header.b="pTjN3F/4";
+       dkim=pass header.i=@broadcom.com header.s=google header.b=U2h0MemE;
+       arc=pass (i=1 dkim=pass dkdomain=broadcom.com dmarc=pass fromdomain=broadcom.com);
+       spf=fail (google.com: domain of timothym+srs=0cwzx=it=broadcom.com=alexey.makhalov@vmware.com does not designate 2603:10b6:408:10c::26 as permitted sender) smtp.mailfrom="timothym+SRS=0CWZx=IT=broadcom.com=alexey.makhalov@vmware.com"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mDbtXvA6/S3pCHvW9r5i6BNDas3jmd9cy1SIj8YcZefMWiZfsz9/3fPGxMWTmj9uWwFGBPJFIdj4Tg/JsA95ckGqemOkw3jWMjlXNXEkIgBYAPz2zcE1KOVBoz88/BcAnAYc8zkfUhSHCNs7ewTlM9Z+ZSgvASgsLIm8fBhrHKE8iCF/XVdtDB1Qc85sCFa7y92C/fOjnBl/jBPiXp7CMmzP+G7/r3qtcIFYBOcjGcOBLUEzBmN/enhshZJAeHCxVlJZUTKxoniGo61ycM88Wv9BakpunMrFUsd6k7UvxS4OqTEc0p/Op6lBJl95h577Z/aw2tqqkzw8UsBRrVj1SQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yGIzhL7QiBJFkwlC84l4JtgAxPW7nCL9ZrpZ+JYeVUM=;
+ b=OdLwH/bCbnAfUBXD3BmHpq8gSIiSUXuRFZ5y8QgNZFzQaT2TLPcDtg/E7jW9b3pyoKOY2eosLX7tJChgoT78igoKKz+1ecuWuTNp0FCb83dyPuGGWqcQ8L3TIpjLC8I4pi0GHXwLnqcKI1GwEousf2qQtA5Yp1VZV0CuzUeGySVlm5FZKgmv5roHlGvDaNXiuqAUQUQDxmt1yCC1uwAIIBavYotMns9zRhBFd9XzqW005dQaVt56u8jGDNAkDtQvLSldy6AvFdJs17FXgaBWwJygVIhQwl4g6xBjz/mJrDvBkxEx4+f1E2AsEkuOklybxdJ0jCiimuLaNGYlc12DNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
+ is 209.85.216.46) smtp.rcpttodomain=vmware.com smtp.mailfrom=broadcom.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=broadcom.com; dkim=pass (signature was verified)
+ header.d=broadcom.com; arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=onevmw.onmicrosoft.com; s=selector2-onevmw-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yGIzhL7QiBJFkwlC84l4JtgAxPW7nCL9ZrpZ+JYeVUM=;
+ b=pTjN3F/4rCiZxwh8xfoynShzh85MNCbl7gqsyXnRCnjjCqdDuj58pHfQEczhm0GifW6QglEYOLPjCMm4UPeOZsiuDyx4gDccWcIxoWoQmHBAhI40UL026YB5X9CLKUKNkPB+8KoRI7bkFhlL+NBQ7hH2b5Qhq7WQ0llRbChf0b8=
+Resent-From: <timothym@vmware.com>
+Received: from BN9P222CA0021.NAMP222.PROD.OUTLOOK.COM (2603:10b6:408:10c::26)
+ by DS7PR05MB9806.namprd05.prod.outlook.com (2603:10b6:8:ef::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.23; Tue, 9 Jan
+ 2024 08:41:05 +0000
+Received: from BN8NAM04FT031.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:408:10c:cafe::b6) by BN9P222CA0021.outlook.office365.com
+ (2603:10b6:408:10c::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.23 via Frontend
+ Transport; Tue, 9 Jan 2024 08:41:05 +0000
+Authentication-Results: spf=temperror (sender IP is 209.85.216.46)
+ smtp.mailfrom=broadcom.com; dkim=pass (signature was verified)
+ header.d=broadcom.com;dmarc=pass action=none header.from=broadcom.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of broadcom.com: DNS Timeout)
+Received: from mail-pj1-f46.google.com (209.85.216.46) by
+ BN8NAM04FT031.mail.protection.outlook.com (10.13.161.115) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7135.32 via Frontend Transport; Tue, 9 Jan 2024 08:41:04 +0000
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-28bc8540299so1508531a91.0
+        for <timothym@vmware.com>; Tue, 09 Jan 2024 00:41:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1704789663; x=1705394463; darn=vmware.com;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yGIzhL7QiBJFkwlC84l4JtgAxPW7nCL9ZrpZ+JYeVUM=;
+        b=U2h0MemE4RjF+FVihGtGvM0Lgtv87rcOoSq+XyA4Eiy5R3/nUgswj1wbJQmYKRxwLr
+         KCAaQrPOPke91a8U8eylBN21O+rFwvWoZA6kPoTcmMNfDN4Euga40uMXKbvxOuBoUDcR
+         OwgV0mwTAWzFsFTukPK6jSicaAH9TsuUvtSow=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704789663; x=1705394463;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yGIzhL7QiBJFkwlC84l4JtgAxPW7nCL9ZrpZ+JYeVUM=;
+        b=s5gE0h+NiQdEwroQ4GDluoINu4OxK4QGx7sy5SyNHHYDX45sMDH65gS5tXeOffis02
+         sl5ZZqZ7bQ9scTV79imPlyAMD4Cjdov2ZPNVodsiiENZVXGnL+6hiBwXqJuFaoAi4GuX
+         lPZ+I0QaHCvTDjoif1PpXlODHjCuopkUBmMaFyy47rYGNBAATLykl9IuKKmG1iXszsX8
+         G7Ak7UVjZ2Jm4LHDeD49qVkuoFVY+nf6eI+UlON6BFl0ZimdWqw2F9wy7Dv3fCvjrV1k
+         CzBMzaec3hb6aN/qUuy61UF2oMmZoKA2dqUBe1HIKKMBJh8VnSohU0LQoe3ZfxmpODnQ
+         0mdg==
+X-Gm-Message-State: AOJu0Yz2d3NQg7zK0xbty2OtiWkixQzNyoM42lKrRdAqqFPcIRVkhl4Z
+	yhVcvDqlELi6fmWV1tEN5J0bg+F3eGnMjtkxpztDnoXR7kuSULJ7QUIXKVPWfTDIM7mwIhjthY/
+	yAfYTDK5Rmg==
+X-Received: by 2002:a17:90b:4d8e:b0:28c:be1d:71b with SMTP id oj14-20020a17090b4d8e00b0028cbe1d071bmr2072134pjb.24.1704789663221;
+        Tue, 09 Jan 2024 00:41:03 -0800 (PST)
+Return-Path: alexey.makhalov@broadcom.com
+Received: from amakhalov-build-vm.eng.vmware.com ([128.177.82.146])
+        by smtp.gmail.com with ESMTPSA id sf15-20020a17090b51cf00b0028d435cc2cbsm4772293pjb.15.2024.01.09.00.41.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jan 2024 00:41:02 -0800 (PST)
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+X-Google-Original-From: Alexey Makhalov <amakhalov@vmware.com>
+To: linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	bp@alien8.de,
+	hpa@zytor.com,
+	dave.hansen@linux.intel.com,
+	mingo@redhat.com,
+	tglx@linutronix.de
+Cc: x86@kernel.org,
+	netdev@vger.kernel.org,
+	richardcochran@gmail.com,
+	linux-input@vger.kernel.org,
+	dmitry.torokhov@gmail.com,
+	zackr@vmware.com,
+	linux-graphics-maintainer@vmware.com,
+	pv-drivers@vmware.com,
+	namit@vmware.com,
+	timothym@vmware.com,
+	akaher@vmware.com,
+	jsipek@vmware.com,
+	dri-devel@lists.freedesktop.org,
+	daniel@ffwll.ch,
+	airlied@gmail.com,
+	tzimmermann@suse.de,
+	mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	horms@kernel.org,
+	kirill.shutemov@linux.intel.com
+Subject: [PATCH v6 1/7] x86/vmware: Move common macros to vmware.h
+Date: Tue,  9 Jan 2024 00:40:46 -0800
+Message-Id: <20240109084052.58661-2-amakhalov@vmware.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20240109084052.58661-1-amakhalov@vmware.com>
+References: <20240109084052.58661-1-amakhalov@vmware.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-EOPTenantAttributedMessage: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0:0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM04FT031:EE_|DS7PR05MB9806:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: e2d06a17-6bff-4ebc-fac9-08dc10eeb729
+X-LD-Processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtFwd
+X-MS-Exchange-AtpMessageProperties: SA
+ExternalBanner: X
+Allow-External: True
+X-MS-Exchange-SenderADCheck: 0
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	iV0ksqKXkWF5VK8aExCH8ugEFwnhEMdAU9l3eV4f3fvK0fT9Z0MjeA/yWgskEy5D/laf8SNAJ2AnmvL7zY4gMSLoreNmQTwUYEaTamELsw8cWM9BhO918bz8H3OBPj8kGZxXBia/Q+PgHjLcoq+oWjByQt3U6WiVRRxyGxYJanRTlDIIM4k52+vY0NoMKw3B7eDWgrbeNihC+SPyEyfU46t/tJX3HJyhHpLFhZWwCgF7AINqqYIN0isD4033nwSsX9vP9GzGyhupayZ5ntJoKLVEzWl9SHPY2KCqbtYPO1MXFuQr8VHfvXoyrqZ9sDlpa4AKwwtPRNm1R2p5CVZ4YQdmH8rXAPeQzH89xo4sotWSeMqukVPCYBpnDUkoAWOzq3DpYiHecXWjEGchKapAAgiWBaAJVVOBW2PunShjP2KTKZiVdFvKtTfhEGrSfJ67+MRhw7fE7A5SinNjewEeAzPgrT/F7r01NxnLU+Pt33dpT/AnHNaQe/04uJrcmO+yzhdFoKjQXUeNKuA/T95fttIQu9dBDiMFFZPTDptzU5ln05rwL++X2VEdr89bZZ73KSBkSnInbrlj6YNnFviFwPzZNfRfyTPNqvkz97BEacgwoWsvCYWkZ5Fi+EwDj0OeW+WE8IPTO8gAIYZa/QP8RlvTjvbrEB5VIibbuZs4AvfEa+4BjUy3eEVgyJ2yyt1L
+X-Forefront-Antispam-Report:
+	CIP:209.85.216.46;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail-pj1-f46.google.com;PTR:mail-pj1-f46.google.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(396003)(346002)(136003)(376002)(64100799003)(61400799012)(48200799006)(451199024)(1076003)(63350400001)(336012)(26005)(9686003)(83380400001)(7696005)(956004)(107886003)(6666004)(44832011)(5660300002)(4326008)(2906002)(498600001)(316002)(8676002)(68406010)(70586007)(86362001)(36756003)(356005)(7596003)(7636003);DIR:OUT;SFP:1101;
+X-MS-Exchange-ForwardingLoop:
+	timothym@vmware.com;b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-OriginatorOrg: onevmw.onmicrosoft.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2024 08:41:04.1010
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2d06a17-6bff-4ebc-fac9-08dc10eeb729
+X-MS-Exchange-CrossTenant-Id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM04FT031.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR05MB9806
+
+Move VMware hypercall macros to vmware.h. This is a prerequisite for
+the introduction of vmware_hypercall API. No functional changes besides
+exporting vmware_hypercall_mode symbol.
+
+Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
+Reviewed-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/vmware.h | 72 +++++++++++++++++++++++++++++------
+ arch/x86/kernel/cpu/vmware.c  | 57 +++------------------------
+ 2 files changed, 66 insertions(+), 63 deletions(-)
+
+diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
+index ac9fc51e2b18..de2533337611 100644
+--- a/arch/x86/include/asm/vmware.h
++++ b/arch/x86/include/asm/vmware.h
+@@ -8,25 +8,34 @@
+ 
+ /*
+  * The hypercall definitions differ in the low word of the %edx argument
+- * in the following way: the old port base interface uses the port
+- * number to distinguish between high- and low bandwidth versions.
++ * in the following way: the old I/O port based interface uses the port
++ * number to distinguish between high- and low bandwidth versions, and
++ * uses IN/OUT instructions to define transfer direction.
+  *
+  * The new vmcall interface instead uses a set of flags to select
+  * bandwidth mode and transfer direction. The flags should be loaded
+  * into %dx by any user and are automatically replaced by the port
+- * number if the VMWARE_HYPERVISOR_PORT method is used.
+- *
+- * In short, new driver code should strictly use the new definition of
+- * %dx content.
++ * number if the I/O port method is used.
+  */
+ 
+-/* Old port-based version */
+-#define VMWARE_HYPERVISOR_PORT    0x5658
+-#define VMWARE_HYPERVISOR_PORT_HB 0x5659
++#define VMWARE_HYPERVISOR_HB		BIT(0)
++#define VMWARE_HYPERVISOR_OUT		BIT(1)
++
++#define VMWARE_HYPERVISOR_PORT		0x5658
++#define VMWARE_HYPERVISOR_PORT_HB	(VMWARE_HYPERVISOR_PORT | \
++					 VMWARE_HYPERVISOR_HB)
++
++#define VMWARE_HYPERVISOR_MAGIC		0x564d5868U
++
++#define VMWARE_CMD_GETVERSION		10
++#define VMWARE_CMD_GETHZ		45
++#define VMWARE_CMD_GETVCPU_INFO		68
++#define VMWARE_CMD_STEALCLOCK		91
++
++#define CPUID_VMWARE_FEATURES_ECX_VMMCALL	BIT(0)
++#define CPUID_VMWARE_FEATURES_ECX_VMCALL	BIT(1)
+ 
+-/* Current vmcall / vmmcall version */
+-#define VMWARE_HYPERVISOR_HB   BIT(0)
+-#define VMWARE_HYPERVISOR_OUT  BIT(1)
++extern u8 vmware_hypercall_mode;
+ 
+ /* The low bandwidth call. The low word of edx is presumed clear. */
+ #define VMWARE_HYPERCALL						\
+@@ -54,4 +63,43 @@
+ 		      "rep insb",					\
+ 		      "vmcall", X86_FEATURE_VMCALL,			\
+ 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
++
++#define VMWARE_PORT(cmd, eax, ebx, ecx, edx)				\
++	__asm__("inl (%%dx), %%eax" :					\
++		"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :		\
++		"a"(VMWARE_HYPERVISOR_MAGIC),				\
++		"c"(VMWARE_CMD_##cmd),					\
++		"d"(VMWARE_HYPERVISOR_PORT), "b"(UINT_MAX) :		\
++		"memory")
++
++#define VMWARE_VMCALL(cmd, eax, ebx, ecx, edx)				\
++	__asm__("vmcall" :						\
++		"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :		\
++		"a"(VMWARE_HYPERVISOR_MAGIC),				\
++		"c"(VMWARE_CMD_##cmd),					\
++		"d"(0), "b"(UINT_MAX) :					\
++		"memory")
++
++#define VMWARE_VMMCALL(cmd, eax, ebx, ecx, edx)				\
++	__asm__("vmmcall" :						\
++		"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :		\
++		"a"(VMWARE_HYPERVISOR_MAGIC),				\
++		"c"(VMWARE_CMD_##cmd),					\
++		"d"(0), "b"(UINT_MAX) :					\
++		"memory")
++
++#define VMWARE_CMD(cmd, eax, ebx, ecx, edx) do {		\
++	switch (vmware_hypercall_mode) {			\
++	case CPUID_VMWARE_FEATURES_ECX_VMCALL:			\
++		VMWARE_VMCALL(cmd, eax, ebx, ecx, edx);		\
++		break;						\
++	case CPUID_VMWARE_FEATURES_ECX_VMMCALL:			\
++		VMWARE_VMMCALL(cmd, eax, ebx, ecx, edx);	\
++		break;						\
++	default:						\
++		VMWARE_PORT(cmd, eax, ebx, ecx, edx);		\
++		break;						\
++	}							\
++	} while (0)
++
+ #endif
+diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
+index 11f83d07925e..4db8e1daa4a1 100644
+--- a/arch/x86/kernel/cpu/vmware.c
++++ b/arch/x86/kernel/cpu/vmware.c
+@@ -41,60 +41,14 @@
+ 
+ #define CPUID_VMWARE_INFO_LEAF               0x40000000
+ #define CPUID_VMWARE_FEATURES_LEAF           0x40000010
+-#define CPUID_VMWARE_FEATURES_ECX_VMMCALL    BIT(0)
+-#define CPUID_VMWARE_FEATURES_ECX_VMCALL     BIT(1)
+ 
+-#define VMWARE_HYPERVISOR_MAGIC	0x564D5868
+-
+-#define VMWARE_CMD_GETVERSION    10
+-#define VMWARE_CMD_GETHZ         45
+-#define VMWARE_CMD_GETVCPU_INFO  68
+-#define VMWARE_CMD_LEGACY_X2APIC  3
+-#define VMWARE_CMD_VCPU_RESERVED 31
+-#define VMWARE_CMD_STEALCLOCK    91
++#define VCPU_LEGACY_X2APIC	3
++#define VCPU_RESERVED		31
+ 
+ #define STEALCLOCK_NOT_AVAILABLE (-1)
+ #define STEALCLOCK_DISABLED        0
+ #define STEALCLOCK_ENABLED         1
+ 
+-#define VMWARE_PORT(cmd, eax, ebx, ecx, edx)				\
+-	__asm__("inl (%%dx), %%eax" :					\
+-		"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :		\
+-		"a"(VMWARE_HYPERVISOR_MAGIC),				\
+-		"c"(VMWARE_CMD_##cmd),					\
+-		"d"(VMWARE_HYPERVISOR_PORT), "b"(UINT_MAX) :		\
+-		"memory")
+-
+-#define VMWARE_VMCALL(cmd, eax, ebx, ecx, edx)				\
+-	__asm__("vmcall" :						\
+-		"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :		\
+-		"a"(VMWARE_HYPERVISOR_MAGIC),				\
+-		"c"(VMWARE_CMD_##cmd),					\
+-		"d"(0), "b"(UINT_MAX) :					\
+-		"memory")
+-
+-#define VMWARE_VMMCALL(cmd, eax, ebx, ecx, edx)                         \
+-	__asm__("vmmcall" :						\
+-		"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :		\
+-		"a"(VMWARE_HYPERVISOR_MAGIC),				\
+-		"c"(VMWARE_CMD_##cmd),					\
+-		"d"(0), "b"(UINT_MAX) :					\
+-		"memory")
+-
+-#define VMWARE_CMD(cmd, eax, ebx, ecx, edx) do {		\
+-	switch (vmware_hypercall_mode) {			\
+-	case CPUID_VMWARE_FEATURES_ECX_VMCALL:			\
+-		VMWARE_VMCALL(cmd, eax, ebx, ecx, edx);		\
+-		break;						\
+-	case CPUID_VMWARE_FEATURES_ECX_VMMCALL:			\
+-		VMWARE_VMMCALL(cmd, eax, ebx, ecx, edx);	\
+-		break;						\
+-	default:						\
+-		VMWARE_PORT(cmd, eax, ebx, ecx, edx);		\
+-		break;						\
+-	}							\
+-	} while (0)
+-
+ struct vmware_steal_time {
+ 	union {
+ 		uint64_t clock;	/* stolen time counter in units of vtsc */
+@@ -108,7 +62,8 @@ struct vmware_steal_time {
+ };
+ 
+ static unsigned long vmware_tsc_khz __ro_after_init;
+-static u8 vmware_hypercall_mode     __ro_after_init;
++u8 vmware_hypercall_mode __ro_after_init;
++EXPORT_SYMBOL_GPL(vmware_hypercall_mode);
+ 
+ static inline int __vmware_platform(void)
+ {
+@@ -476,8 +431,8 @@ static bool __init vmware_legacy_x2apic_available(void)
+ {
+ 	uint32_t eax, ebx, ecx, edx;
+ 	VMWARE_CMD(GETVCPU_INFO, eax, ebx, ecx, edx);
+-	return !(eax & BIT(VMWARE_CMD_VCPU_RESERVED)) &&
+-		(eax & BIT(VMWARE_CMD_LEGACY_X2APIC));
++	return !(eax & BIT(VCPU_RESERVED)) &&
++		(eax & BIT(VCPU_LEGACY_X2APIC));
+ }
+ 
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
+-- 
+2.39.0
+

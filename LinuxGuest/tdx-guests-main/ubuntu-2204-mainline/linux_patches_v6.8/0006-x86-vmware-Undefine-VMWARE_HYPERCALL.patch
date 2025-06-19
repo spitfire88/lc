@@ -1,0 +1,26 @@
+From 0b28e441ca61d1044eab8414256ac0eef9ce9f08 Mon Sep 17 00:00:00 2001
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Date: Tue, 9 Jan 2024 00:40:51 -0800
+Subject: [PATCH 6/9] x86/vmware: Undefine VMWARE_HYPERCALL
+
+No more direct use of VMWARE_HYPERCALL macro should be allowed.
+
+Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
+---
+ arch/x86/include/asm/vmware.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
+index 2ac87068184a..84a31f579a30 100644
+--- a/arch/x86/include/asm/vmware.h
++++ b/arch/x86/include/asm/vmware.h
+@@ -273,5 +273,6 @@ unsigned long vmware_hypercall_hb_in(unsigned long cmd, unsigned long in2,
+ }
+ #undef VMW_BP_REG
+ #undef VMW_BP_CONSTRAINT
++#undef VMWARE_HYPERCALL
+ 
+ #endif
+-- 
+2.34.1
+

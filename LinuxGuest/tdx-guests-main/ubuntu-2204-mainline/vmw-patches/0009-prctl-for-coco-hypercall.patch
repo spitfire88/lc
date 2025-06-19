@@ -1,0 +1,244 @@
+From 2305d63f60cfda716633818eda3e7e3b35f8270b Mon Sep 17 00:00:00 2001
+From: "tim.merrifield" <tim.merrifield@broadcom.com>
+Date: Mon, 26 Feb 2024 23:21:09 +0000
+Subject: prctl for coco hypercall
+
+---
+ arch/x86/coco/tdx/tdx.c            | 29 ++++++++++++++++++++++++
+ arch/x86/include/asm/thread_info.h |  2 ++
+ arch/x86/include/asm/vmware.h      |  5 +++--
+ arch/x86/include/asm/x86_init.h    |  1 +
+ arch/x86/include/uapi/asm/prctl.h  |  2 ++
+ arch/x86/kernel/cpu/vmware.c       | 36 +++++++++++++++++++++++++++---
+ arch/x86/kernel/process.c          | 17 ++++++++++++++
+ 7 files changed, 87 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+index c1cb90369915..fc6adad38d98 100644
+--- a/arch/x86/coco/tdx/tdx.c
++++ b/arch/x86/coco/tdx/tdx.c
+@@ -234,6 +234,7 @@ static int ve_instr_len(struct ve_info *ve)
+ 	case EXIT_REASON_MSR_WRITE:
+ 	case EXIT_REASON_CPUID:
+ 	case EXIT_REASON_IO_INSTRUCTION:
++        case EXIT_REASON_VMCALL:
+ 		/* It is safe to use ve->instr_len for #VE due instructions */
+ 		return ve->instr_len;
+ 	case EXIT_REASON_EPT_VIOLATION:
+@@ -630,6 +631,31 @@ void tdx_get_ve_info(struct ve_info *ve)
+ 	ve->instr_info  = upper_32_bits(args.r10);
+ }
+ 
++
++/*
++ * Emulate hypervisor-specific VMCALLs using hypercall.
++ */
++static int handle_vmcall(struct pt_regs *regs, struct ve_info *ve)
++{
++	pr_warn("in handle_vmcall %d %p %p",
++                test_thread_flag(TIF_COCO_USER_HCALL),
++                current_thread_info(),
++                x86_platform.hyper.tdx_hcall);
++
++	if (x86_platform.hyper.tdx_hcall &&
++            test_thread_flag(TIF_COCO_USER_HCALL)) {
++		if (!x86_platform.hyper.tdx_hcall(regs)) {
++                        pr_warn("hcall failed.\n");
++			return -EIO;
++		}
++		//pr_warn("SUCCESS!\n");
++		return ve_instr_len(ve);
++	} else {
++                pr_warn("Returning EOPNOTSUPP.\n");
++		return -EOPNOTSUPP;
++	}
++}
++
+ /*
+  * Handle the user initiated #VE.
+  *
+@@ -641,6 +667,9 @@ static int virt_exception_user(struct pt_regs *regs, struct ve_info *ve)
+ 	switch (ve->exit_reason) {
+ 	case EXIT_REASON_CPUID:
+ 		return handle_cpuid(regs, ve);
++        case EXIT_REASON_VMCALL:
++                //pr_warn("In virt_exception_user for VMCALL.\n");
++		return handle_vmcall(regs, ve);
+ 	default:
+ 		pr_warn("Unexpected #VE: %lld\n", ve->exit_reason);
+ 		return -EIO;
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index d63b02940747..7cd16659fbff 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -100,6 +100,7 @@ struct thread_info {
+ #define TIF_BLOCKSTEP		25	/* set when we want DEBUGCTLMSR_BTF */
+ #define TIF_LAZY_MMU_UPDATES	27	/* task is updating the mmu lazily */
+ #define TIF_ADDR32		29	/* 32-bit address space on 64 bits */
++#define TIF_COCO_USER_HCALL     30      /* Hypercalls are allowed in coco userspace */
+ 
+ #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+ #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+@@ -122,6 +123,7 @@ struct thread_info {
+ #define _TIF_BLOCKSTEP		(1 << TIF_BLOCKSTEP)
+ #define _TIF_LAZY_MMU_UPDATES	(1 << TIF_LAZY_MMU_UPDATES)
+ #define _TIF_ADDR32		(1 << TIF_ADDR32)
++#define _TIF_COCO_USER_HCALL    (1 << TIF_COCO_USER_HCALL)
+ 
+ /* flags to check in __switch_to() */
+ #define _TIF_WORK_CTXSW_BASE					\
+diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
+index 3bd593c6591d..68a681457770 100644
+--- a/arch/x86/include/asm/vmware.h
++++ b/arch/x86/include/asm/vmware.h
+@@ -76,7 +76,8 @@ extern u8 vmware_hypercall_mode;
+ #define VMWARE_TDX_HCALL_FUNC  1
+ 
+ extern unsigned long vmware_tdx_hypercall(unsigned long cmd,
+-					  struct tdx_module_args *args);
++					  struct tdx_module_args *args,
++                                          bool isUser);
+ 
+ /*
+  * TDCALL[TDG.VP.VMCALL] uses %rax (arg0) and %rcx (arg2). Therefore,
+@@ -99,7 +100,7 @@ unsigned long vmware_tdx_hypercall_args(unsigned long cmd, unsigned long in1,
+ 		.rdi = in5,
+ 	};
+ 
+-	ret = vmware_tdx_hypercall(cmd, &args);
++	ret = vmware_tdx_hypercall(cmd, &args, false /*isUser*/ );
+ 
+ 	if (out1)
+ 		*out1 = args.rbx;
+diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
+index c878616a18b8..433c7d4e5ca1 100644
+--- a/arch/x86/include/asm/x86_init.h
++++ b/arch/x86/include/asm/x86_init.h
+@@ -271,6 +271,7 @@ struct x86_hyper_runtime {
+ 	void (*sev_es_hcall_prepare)(struct ghcb *ghcb, struct pt_regs *regs);
+ 	bool (*sev_es_hcall_finish)(struct ghcb *ghcb, struct pt_regs *regs);
+ 	bool (*is_private_mmio)(u64 addr);
++        bool (*tdx_hcall)(struct pt_regs *regs);
+ };
+ 
+ /**
+diff --git a/arch/x86/include/uapi/asm/prctl.h b/arch/x86/include/uapi/asm/prctl.h
+index 384e2cc6ac19..233e043679bd 100644
+--- a/arch/x86/include/uapi/asm/prctl.h
++++ b/arch/x86/include/uapi/asm/prctl.h
+@@ -23,6 +23,8 @@
+ #define ARCH_MAP_VDSO_32		0x2002
+ #define ARCH_MAP_VDSO_64		0x2003
+ 
++#define ARCH_SET_COCO_USER_HCALL        0x1030
++
+ /* Don't use 0x3001-0x3004 because of old glibcs */
+ 
+ #define ARCH_GET_UNTAG_MASK		0x4001
+diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
+index 84caa67d4820..d1659546cf19 100644
+--- a/arch/x86/kernel/cpu/vmware.c
++++ b/arch/x86/kernel/cpu/vmware.c
+@@ -430,12 +430,13 @@ static bool __init vmware_legacy_x2apic_available(void)
+ 
+ #ifdef CONFIG_INTEL_TDX_GUEST
+ unsigned long vmware_tdx_hypercall(unsigned long cmd,
+-				   struct tdx_module_args *args)
++				   struct tdx_module_args *args,
++				   bool isUser)
+ {
+ 	if (!hypervisor_is_type(X86_HYPER_VMWARE))
+ 		return ULONG_MAX;
+ 
+-	if (cmd & ~VMWARE_CMD_MASK) {
++	if (!isUser && (cmd & ~VMWARE_CMD_MASK)) {
+ 		pr_warn_once("Out of range command %lx\n", cmd);
+ 		return ULONG_MAX;
+ 	}
+@@ -444,13 +445,39 @@ unsigned long vmware_tdx_hypercall(unsigned long cmd,
+ 	args->r11 = VMWARE_TDX_HCALL_FUNC;
+ 	args->r12 = VMWARE_HYPERVISOR_MAGIC;
+ 	args->r13 = cmd;
+-	args->r15 = 0; /* CPL */
++	args->r15 = (isUser) ? 3: 0; /* CPL */
+ 
+ 	__tdx_hypercall(args);
+ 
+ 	return args->r12;
+ }
+ EXPORT_SYMBOL_GPL(vmware_tdx_hypercall);
++
++static bool vmware_tdx_user_hcall(struct pt_regs *regs)
++{
++        unsigned long ret;
++
++        struct tdx_module_args args = {
++                .rbx = regs->bx,
++                .rdx = regs->dx,
++                .rsi = regs->si,
++                .rdi = regs->di,
++                .r14 = regs->bp,
++        };
++
++        ret = vmware_tdx_hypercall(regs->cx, &args, true);
++
++        regs->ax = args.r12;
++        regs->bx = args.rbx;
++        regs->cx = args.r13;
++        regs->dx = args.rdx;
++        regs->si = args.rsi;
++        regs->di = args.rdi;
++        regs->bp = args.r14;
++
++        return true;
++}
++
+ #endif
+ 
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
+@@ -498,4 +525,7 @@ const __initconst struct hypervisor_x86 x86_hyper_vmware = {
+ 	.runtime.sev_es_hcall_prepare	= vmware_sev_es_hcall_prepare,
+ 	.runtime.sev_es_hcall_finish	= vmware_sev_es_hcall_finish,
+ #endif
++#ifdef CONFIG_INTEL_TDX_GUEST
++	.runtime.tdx_hcall              = vmware_tdx_user_hcall,
++#endif
+ };
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index ab49ade31b0d..72fc4d200a34 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -1062,6 +1062,20 @@ unsigned long __get_wchan(struct task_struct *p)
+ 	return addr;
+ }
+ 
++static int set_coco_user_hcall_mode(unsigned long enabled)
++{
++	if (enabled) {
++                //pr_warn("set flag. %p\n", current_thread_info());
++		set_thread_flag(TIF_COCO_USER_HCALL);
++	} else {
++                //pr_warn("clear flag %p.\n", current_thread_info());
++		clear_thread_flag(TIF_COCO_USER_HCALL);
++	}
++
++	return 0;
++}
++
++
+ long do_arch_prctl_common(int option, unsigned long arg2)
+ {
+ 	switch (option) {
+@@ -1075,6 +1089,9 @@ long do_arch_prctl_common(int option, unsigned long arg2)
+ 	case ARCH_GET_XCOMP_GUEST_PERM:
+ 	case ARCH_REQ_XCOMP_GUEST_PERM:
+ 		return fpu_xstate_prctl(option, arg2);
++        case ARCH_SET_COCO_USER_HCALL:
++                //pr_warn("do_arch_prctl_common here.\n");
++                return set_coco_user_hcall_mode(arg2);
+ 	}
+ 
+ 	return -EINVAL;
+-- 
+2.34.1
+
