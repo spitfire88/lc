@@ -55,8 +55,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/salvares/lc/Embedded/LRUCache",
-      "program": "/home/salvares/lc/Embedded/LRUCache/build/Debug/outDebug",
+      "cwd": "/home/salvares/lc",
+      "program": "/home/salvares/lc/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
