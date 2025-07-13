@@ -1,0 +1,111 @@
+Round 1: 
+function pointer array
+
+#include <stdio.h>
+// declare an array of func ptrs
+// define foo1, foo2 - assinged to the above array
+// function calls into foo1, foo2
+
+void foo1(int x) {
+	printf("x=%d\n", x);
+} 
+
+void foo2(int x) {
+	printf("x=%d\n", x);
+}
+
+int main() {
+    void (*fn[2])(int) = { foo1, foo2};
+
+	(*fn)();
+    (*(fn + 1))();
+
+    for(int i = 0; i < 2; i++)
+		fn[i]();
+
+	return 0;
+}
+
+Round 2:
+ECC Block -> 0x7000000 - 0x72000000 (each 64 bytes addr 4K data)
+0x80000000 - 0x100000000
+Add testcases to test the hardware
+Turn ECC on/off API
+Get_ECC_base_addr() API
+
+
+Round 3:
+	- Boot process in detail
+	- Barriers in ARM
+	- ATU has channels, memory translation of peripheral address of 64 bytes to 32 bytes of virtual address
+	- Allocate and deallocate channels based whether they are already assigned/not
+	- Translation 8008 0000 -> FFFF0000 60000000
+			8008 0001 -> FFFF0000 60000001
+			8009 0000 -> FFFF0000 60010000
+
+
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#define NUM_CHANNELS 8
+
+// Structure to represent a channel
+typedef struct {
+    bool is_allocated;
+    uint32_t start_address;
+    uint32_t end_address;
+} Channel;
+
+// Array to hold the channels
+Channel channels[NUM_CHANNELS];
+
+// Function to initialize channels
+void initialize_channels() {
+    for (int i = 0; i < NUM_CHANNELS; i++) {
+        channels[i].is_allocated = false;
+        channels[i].start_address = 0;
+        channels[i].end_address = 0;
+    }
+}
+
+// Function to allocate a channel
+int allocate_channel(uint32_t start_address, uint32_t end_address) {
+    for (int i = 0; i < NUM_CHANNELS; i++) {
+        if (!channels[i].is_allocated) {
+            channels[i].is_allocated = true;
+            channels[i].start_address = start_address;
+            channels[i].end_address = end_address;
+            return i; // Return the allocated channel index
+        }
+    }
+    return -1; // No available channels
+}
+
+// Function to translate 64-bit address to 32-bit address based on channel allocation
+uint32_t translate_address(uint64_t address) {
+    for (int i = 0; i < NUM_CHANNELS; i++) {
+        if (channels[i].is_allocated &&
+            address >= channels[i].start_address &&
+            address <= channels[i].end_address) {
+            return (uint32_t)(address - channels[i].start_address);
+        }
+    }
+    return 0xFFFFFFFF; // Address not found in any channel
+}
+
+int main() {
+    initialize_channels();
+
+    // Example allocations
+    allocate_channel(0x00000000, 0x0FFFFFFF); // Channel 0
+    allocate_channel(0x10000000, 0x1FFFFFFF); // Channel 1
+
+    uint64_t address64 = 0x0000000012345678;
+    uint32_t address32 = translate_address(address64);
+    printf("64-bit address: 0x%016llX\n", address64);
+    printf("32-bit address: 0x%08X\n", address32);
+
+    return 0;
+}
+

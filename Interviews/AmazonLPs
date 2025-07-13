@@ -1,0 +1,124 @@
+LPs: Customer Obsession
+S: Knowing what a customer needs before they think they need it. 
+T: Gather data from across other teams supporting Hypervisor vendors, like Google, Microsoft, Chinese Cloud Companies. Evaluate what they are asking before your client asks.
+A: I got involved in meetings that showcase Intel TDX issues and features being asked for by these customers. My client chose to follow rather than lead. Which meant that I had the time to evaluate other teams missteps, learnings and apply them effectively to my clients roadmap. I can only influence customer by either creating a reference implementation (hard to do if it’s a big feature), or gather data about the ecosystem's decision to move in a particular direction. 
+Take for example, using TPM vs using RTMR 
+R: 
+
+LPs: Customer Obsession, Ownership, Learn and be Curious, Go above and beyond for the customer
+S: Knowing what the customer needs before they think they need it. SEV didn't fly why would TDX and as such why should they invest more resources on it.
+T: Double up on TDX base enabling. Guest Linux boot. Make it to 9.0 Release internal goal which might sway customer to enable
+A: Linear development and testing for booting Linux. Fixed issues quickly and showed consistent day-to-day progress. Found missing functionality (virtualized TSC, AGP not needed, backdoor VMCALL dependencies in VMWare specific drivers that needed fixing)
+R: Became POR for customer as they saw progress and possibility to commit for 9.0 release.
+
+LPs: Deliver Results, Earn Trust
+S: Internal feedback where we stand on CPU/Memory performance, boot KPIs, wrong CPU Halt Path
+T: Initial performance was around 60% of Legacy workloads. TDX Module introduces <5% overhead. Where is the additional overhead being introduced?
+A: 
+	1. Boot time performance lags in TDVF. Debug tlb shootdown per vcpu, and isolate pvscsi driver taking extra time. Fixing that decreased Boot time by 50%.
+	2. TDX aware HLT path was not being used, instead legacy/acpi-idle path. This resulted increased latency for Large VMs (128vcpu/256GbMem). Fixing that increased performance in SPECjbb scores for LargeVMs. 
+R: Closing these issues in a timely manner helped TDX to be ready for 9.0 Release without any major/minor delays. 
+
+LPs: Have backbone, disagree and commit
+S: Manager wants me to work on evangelizing TDX, market internally and externally. My primary job is to enable TDX features which would distract me from enabling core TDX features like live migration. Learn new part of stack, present
+T: Demonstrate in both ways, using reference code and data from ecosystem that Live Migration is going to be pivotal to say the TDX 1.0 feature is complete. There is pushback and I accept that at this particular time, marketing the current support is crucial for management. 
+A: Found a team that created applications for Chinese cloud market. Collaborate and port those applications on VMware stack. Go to confidential computing summit.
+R: Extremely good response with multiple event attendees interested in release dates and capabilities. A couple of companies started engaging with Intel for early access.
+
+Have backbone, disagree and commit
+S: Intel-mlc does not run on ESXi but is the de facto way of determining memory latencies that Intel touts
+T: Intel-mlc needs to be ported to run on ESXi so that we can have correct readings of memory latency. Currently being run as monster VM. Not possible to get those results with TDX since we do not suppot IOMMU and IR. Hence biggest VM can only be within single NUMA node. [UPI for multiple memory controllers]
+A: Show KVM data as to why they differ. Find Intel-mlc PE, source, to identify the requirementd and estimate time for completion. Push back received because its not our charter and we have done without it before so must not prioritize that now. Move on to do TDX Evangelizing work.
+
+LPs: Are Right, A Lot
+S: Is TDX better than SGX?
+T: Why should VMware invest in TDX technology
+A: Explain architecture, share real world use cases like the potential of having multiple competing clients share resources on the same host hence improving efficiency. Horizontal Federated Learning, RAG/LLM datasets, etc.
+R: Convinced customer by showing potential real world applications deployed by cloud service providers 
+
+LPs: Are right, a lot; Think Big
+S: How to convince VMware this is not just another security feature, like SGX or even AMD SEV and they do not see engagement 
+T: Create a turnkey solution. Identify setup bottlenecks that can distract and make the technology adoption seem difficult and abstract it out for customer trials4
+A: Engage with Intel Developer Cloud team to propose a setup that provides Vmware TDX solution with relevant applications. Get their sign off and present it to VMware as a roadmap for their stack to be available to potential interested customers, even before Vmware goes GA on TDX. 
+R: VMware loves the idea, they are ready to share under NDA and provide customer support in addition to Intel teams 
+
+LPs: Think Big
+S: How to attract a customer with a turnkey solution
+T: Manager says customer will not  adopt technology if the ramp up is steep. Understand what the tech enables, and how will it affect customer application
+A: Gen AI, Horizontal Federated Learning are niche markets for customer to keep own data secure from cloud. Deploy these applications on Vmware stack to show readiness and ease of deployment. Highlight technologies that work with TDX to make a the application secure in multiple ways
+R: Customer interested in signing NDA for early access of the code. Customer engineering teams start ramping up on software stack
+
+LPs: Are right, a lot
+S: Testing an arbitrary point in upstream isn't going to work with customer. Customer will need to pull prebuilt kernels with Vmware support.
+T: Get OSVs like Canonical/RHEL to pick up Vmware patches
+A: Find and engage with teams that work with OSVs and educate them about the need to include Vmware patches. Match their project timeline with Vmware releases. Ask for requirements
+R: Initiate upstreaming process early since it takes time. Review internally to accelerate upstreaming review process. Get Canonical/RHEL to pick up patches in midstream
+
+LPs: Frugality
+S: What to prioritize after TDX base support? Why?
+T: There are many features, like TDX Migration, TDX Partitioning, TDX Connect (Secure IO). How to prioritize given resource crunch
+A: Share how the TDX solution is being deployed by technology leading competitors. For eg. for HyperV partitioning was crucial to have legacy WindowsVMs work seamlessly on TDX HyperV hosts. But for VMware, potentially Migration would show completeness of TDX Base support before moving on to Partitioning or TDX Connect. TDX Connect has missing implementation of PCIE 6.0 features in VMM without which a full support of TDX Connect would take longer to complete
+R: VMware is convinced with TDX Migration should be the next feature. Make TDX release on ESXi as dev preview and only full support after TDX migration is supported. 
+
+LPs: Earn Trust, Customer Obsession, Ownership
+S: Customer needs internal review before going to review upstream
+T: Post internally and go through review process to make sure they are ready for upstream
+A: Publish patches to internal review committee and go through the review process, arguing the potential pros/cons of the method used, and 
+Incorporate feedback from the maintainers
+R: Patches were ready for upstream feedback and merged without major pushback, very quickly by upstream timeline standards
+
+LPs: Success and Scale bring Broad Responsibility
+S: Part of Launch Team responsible for L3 support
+T: Samsung called to lab to fix an issue that is only showing up in one part of Canada Lab
+A: Analyze bug report, create a debug patch 
+that does not create unnecessary overhead
+
+LP: Invent and simplify
+S: Find a way to share open source kernel tree to review and share vmware kernel commit feedback since there were issues adding open source project in current NDA
+T: Create a git project under already existing git repo
+A: Showed multiple ways to do that
+R: Simpler way was to script a checkout of open source tree and apply patches
+Vmware's TDX solution 
+
+LPs: Insist on high standards
+S: Find bugs during development and track them to closure, even if they are not domain
+
+LPs: Earn Trust
+S: Feedback was that the way VMware were implementing their upstream patch which was not something that would fly upstream.
+T: Convince VMware that feedback coming from the maintainers internally was not to discourage VMware upstreaming effort but to align with security measures that were being put together by Intel
+A: Communicate and bring the two parties to the table and discuss why these concerns were raised. And that they were not VMware specific. VMware's own situation regarding open-vm-tools was discussed as well and chosen to be a separate patch but only if fuzzing was part of open-vm-tools.
+R: Feedback was accepted and patchsets were updated, reviewed and ack'd then posted upstream
+
+LPs: Deep Dive
+S: Understanding dynamic PAMT solution and creating a reference implementation
+T: Convince VMware that this is a real world problem, customers are interested in and VMware should look to implement
+A: Reference implementation provided a way for VMware to quickly scope the work and also convince their management that it could make it to 9.0 release
+R: Accepted reference, implemented, validated and commited for 9.0 release
+
+LPs: Hire and develop the best
+S: Mentor junior engineers/peers 
+T: Once the initial bring up in done, help hand off system to next set of activities where a junior engineer is POC - Audio/Camera
+A: Share a script that answers most if not all the questions. If some tests fail provide next steps in comments.
+R: Same guy doing the work one power-on later does not have the same questions or issue and ramps up quickly
+
+LPs: Hire and develop the best
+S: Interview engineers for specific roles within my team
+T: Check if experience is applicable, if not an exact fit, look for ways to understand problem solving skills that are usually seen in my role
+A: How would they proceed while debugging a particular situation, say a pcie device not seen after boot
+R: Have played a part in hiring one guy on Chrome team that was able to quickly ramp up and work in Power-On Lab environment
+
+LPs: Bias for action
+S: Big VMs are showing major drop in performance, SPECJbb in particular
+T: recreate setup 
+A: recreated a setup and synced with SPECJbb POC to understand the intricacies of what SPECJbb is testing. Isolated to cpu and wrote a test that increments cpu counter
+R: TDX HLT path
+
+• Tell me about a time when you were faced with a problem that had a number of possible solutions. What was the problem and how did you determine the course of action? What was the outcome of that choice?
+	
+• Tell me about an interesting back end/front-end/full stack project you've delivered recently. What obstacles did you have to overcome?
+• When did you take a risk, make a mistake, or fail? How did you respond, and how did you grow from that experience?
+• Describe a time you took the lead on a project.
+• What did you do when you needed to motivate a group of individuals or promote collaboration on a particular project?
+• How have you leveraged data to develop a strategy?
+
+

@@ -1,0 +1,16 @@
+	1. Job Role
+	2. FIO seqred/wr perf drop
+		a. Lock contention in PVSCSI
+			i. Use two locks for request queue and completion queue
+		b. Critical region
+			i. Swiotlb bounce buffer for all DMA -> has been optimized to be lockless
+		c. Kick the device
+	3. VMware Hypercall Linux Patch
+	4. Vmware Vmcall patch for user
+	5. WBINVD instruction handling in TD
+	6. New TDX Seamcalls spec
+	7. Boot performance
+		a. TLB shootdown
+		b. LargePages
+		c. Unaccepted Memory (2GB)
+TDX Halt Path
