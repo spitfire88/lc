@@ -111,6 +111,11 @@
     "numeric": "cpp",
     "random": "cpp",
     "shared_mutex": "cpp",
-    "cinttypes": "cpp"
+    "cinttypes": "cpp",
+    "barrier": "cpp",
+    "bitset": "cpp",
+    "fstream": "cpp",
+    "iomanip": "cpp",
+    "sstream": "cpp"
   }
 }
