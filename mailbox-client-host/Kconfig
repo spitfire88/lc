@@ -1,0 +1,11 @@
+menuconfig MAILBOX_CLIENT_HOST
+    bool "Mailbox Client/Host"
+    default y
+    help
+      This option enables the Mailbox Client/Host application based on the Common Mailbox Framework in the Linux Kernel.
+      
+config MAILBOX_DRIVER
+    bool "Enable Mailbox Driver"
+    depends on MAILBOX_CLIENT_HOST
+    help
+      This option enables the Mailbox Driver that interfaces with the Linux kernel's Common Mailbox Framework.

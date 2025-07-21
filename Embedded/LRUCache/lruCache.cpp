@@ -78,7 +78,7 @@ public:
 
     void put(int key, int value) {
         // Exclusive lock for writers
-        std::unique_lock<std::shared_mutex> lock(rw_lock);
+        std::unique_lock<std::shared_mutex> write_lock(rw_lock);
         if(cache.find(key) != cache.end()) {
             std::cout << "key already present! \n";
             return;

@@ -31,7 +31,7 @@ using namespace std;
 class Scheduler {
 public:
     int minInterval(vector<char>& tasks, int n) {
-        vector<int> countTasks (26, 0);
+        vector<int> countTasks(26, 0);
         for( char c : tasks) {
             // {0, count}, ...
             countTasks[c - 'A']++;
